@@ -323,6 +323,15 @@
         // --- Start ---
         function startGame() {
             sessionStorage.setItem('gameActive', 'true');
+
+            // Play Music on interaction
+            const music = document.getElementById('bg-music');
+            if (music) {
+                music.play().catch(e => console.log("Audio play failed or blocked", e));
+                document.querySelector('.music-pill i').className = 'fas fa-pause';
+                isPlaying = true;
+            }
+
             // Soft fade out
             gsap.to('.love-card', {
                 y: -50,

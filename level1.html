@@ -473,7 +473,12 @@
             if (sessionStorage.getItem('gameActive') === 'true') {
                 // Try auto-play if interaction happened
                 const music = document.getElementById('bg-music');
-                // music.play().catch(e => console.log("Audio waiting for interaction"));
+                if (music) {
+                    music.play().catch(e => console.log("Audio waiting for interaction"));
+                    // Update icon if successful
+                    document.querySelector('.music-pill i').className = 'fas fa-pause';
+                    isPlaying = true;
+                }
             }
         });
 

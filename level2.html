@@ -388,7 +388,7 @@
             // Check music state
             if (sessionStorage.getItem('gameActive') === 'true') {
                 const music = document.getElementById('bg-music');
-                // music.play().catch(() => {});
+                music.play().catch(() => { });
             }
         });
 
