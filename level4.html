@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Level 4</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .photo-card {
+            position: relative;
+            height: 150px;
+            background: #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .photo-card.revealed img {
+            opacity: 1;
+        }
+
+        .photo-card::after {
+            content: '🔒';
+            font-size: 2rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .photo-card.revealed::after {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="level-badge">Level 4: Hidden Memories 📸</div>
+
+    <div class="game-container fade-in">
+        <h2>Tap to Unlock Memories! 🔐</h2>
+
+        <div class="photo-grid" id="photo-grid">
+            <div class="photo-card">
+                <img src="assets/images/level4/justus.jpeg" alt="Just Us">
+            </div>
+            <div class="photo-card">
+                <img src="assets/images/level4/mountain.jpeg" alt="Mountain Adventure">
+            </div>
+            <div class="photo-card">
+                <img src="assets/images/level4/temple.jpeg" alt="Temple Visit">
+            </div>
+            <div class="photo-card">
+                <img src="assets/images/level4/temple_date.jpeg" alt="Temple Date">
+            </div>
+        </div>
+
+        <p id="counter">Memories Unlocked: 0/4</p>
+        <button id="next-btn" class="btn-game" style="display: none; margin-top: 20px;">Final Level! 💌</button>
+    </div>
+
+    <script>
+        let unlocked = 0;
+        const total = 4;
+        const cards = document.querySelectorAll('.photo-card');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('counter');
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (!card.classList.contains('revealed')) {
+                    card.classList.add('revealed');
+                    unlocked++;
+                    counter.innerText = `Memories Unlocked: ${unlocked}/${total}`;
+
+                    if (unlocked === total) {
+                        nextBtn.style.display = 'inline-block';
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                    }
+                }
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            // Transition effect
+            document.querySelector('.game-container').style.opacity = '0';
+            setTimeout(() => {
+                window.location.href = 'level5.html';
+            }, 500);
+        });
+
+        // Check if game is active
+        if (!sessionStorage.getItem('gameActive')) {
+            // window.location.href = 'index.html'; // Commented out for easier testing, uncomment for prod
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</body>
+
+</html>

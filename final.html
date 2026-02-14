@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Boss Level</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .final-box {
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-container fade-in" style="background: radial-gradient(#fff0f5, #ffe4e1);">
+        <h1 class="pop-in" style="font-size: 3rem;">Darla... ❤️</h1>
+        <br>
+        <h2 class="pop-in delay-1">Will you be my Valentine forever? 💍</h2>
+
+        <div class="options" style="margin-top: 50px;">
+            <button class="btn-game" onclick="accept()"
+                style="background: #32CD32; font-size: 1.5rem; padding: 20px 40px;">YES! 😍</button>
+            <button class="btn-game" id="no-btn" onmouseover="moveBtn()"
+                style="background: #FF6347; font-size: 1rem;">No 😢</button>
+        </div>
+
+        <div id="success-msg" class="hidden fade-in" style="margin-top: 30px;">
+            <h2>Achievement Unlocked: FOREVER! 🏆💖</h2>
+            <p>You completed Twitty's Heart!</p>
+            <br>
+            <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2JmeHJlOGlpMHB2ZmJ5YmN5bmY1Z2M2YjF0eW1yYmljb25vYXkwZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/ttT86hqiCnCozzHtBc/giphy.gif" alt="Happy" width="200">
+        </div>
+    </div>
+
+    <script>
+        function moveBtn() {
+            const btn = document.getElementById('no-btn');
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.position = 'fixed'; // Escape container
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+
+        function accept() {
+            document.querySelector('.options').style.display = 'none';
+            document.querySelector('h1').innerText = "YAY!!! I LOVE YOU! 💖";
+            document.querySelector('h2').style.display = 'none';
+            document.getElementById('success-msg').classList.remove('hidden');
+
+            // Confetti
+            var duration = 5 * 1000;
+            var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        if (!sessionStorage.getItem('gameActive')) window.location.href = 'index.html';
+    </script>
+</body>
+
+</html>

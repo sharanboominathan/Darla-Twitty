@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Love Quest</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=Quicksand:wght@400;500;600&family=Dancing+Script:wght@500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            /* Soft White Fallback */
+            --pastel-pink: #FFD1DC;
+            --pastel-peach: #FFDAC1;
+            --pastel-lavender: #E6E6FA;
+            --rose-gold: #B76E79;
+            --text-dark: #6D6D6D;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom right, #FFF1EB, #ACE0F9);
+            /* Warm Peach to Soft Blue */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+        }
+
+        /* Floating Hearts Background */
+        .hearts-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart-particle {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.4);
+            font-size: 1.5rem;
+            animation: rise 10s infinite ease-in;
+            opacity: 0;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(110vh) scale(0.8);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Main Card - Soft Glass / Diary Style */
+        .love-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(183, 110, 121, 0.15);
+            /* Soft Rose Shadow */
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: cardFloat 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes cardFloat {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 2.8rem;
+            color: var(--rose-gold);
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* Couple Image/GIF - Soft Circular or Rounded */
+        .couple-img {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            /* Circle */
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 5px solid white;
+            position: relative;
+        }
+
+        .couple-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Placeholder: Soft Anime Couple GIF */
+            /* Using a Giphy link for "soft anime couple" */
+        }
+
+        /* Chat Bubbles */
+        .chat-area {
+            width: 100%;
+            min-height: 80px;
+            /* Space for chats */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .bubble {
+            background: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #777;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeChat 1s forwards;
+            max-width: 80%;
+        }
+
+        .bubble.twitty {
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            background: #fff0f5;
+            color: #d88;
+        }
+
+        .bubble.darla {
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            background: #e6e6fa;
+            color: #88d;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes fadeChat {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Start Button */
+        .btn-start {
+            background: linear-gradient(135deg, #FFD1DC 0%, #FFDAC1 100%);
+            border: none;
+            padding: 16px 50px;
+            border-radius: 50px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            /* Or maybe a darker rose gold text */
+            color: #8a5a5a;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 209, 220, 0.5);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 209, 220, 0.7);
+            background: linear-gradient(135deg, #FFDAC1 0%, #FFD1DC 100%);
+        }
+
+        /* Music Toggle */
+        .music-pill {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            transition: 0.3s;
+        }
+
+        .music-pill:hover {
+            background: white;
+        }
+
+        /* Mobile */
+        @media(max-width: 600px) {
+            .love-card {
+                padding: 30px 20px;
+                width: 85%;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .couple-img {
+                width: 220px;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music" loop src="assets/music.mp3"></audio>
+    <div class="music-pill" onclick="toggleMusic()">
+        <i class="fas fa-music"></i> <span>Music On/Off</span>
+    </div>
+
+    <div class="hearts-bg" id="hearts-container"></div>
+
+    <div class="love-card">
+        <h1>Love Quest</h1>
+        <h2>Twitty & Darla's Story</h2>
+
+        <div class="couple-img">
+            <img src="assets/images/index_page/Holding_hands.jpeg" alt="Cute Anime Couple">
+        </div>
+
+        <div class="chat-area">
+            <div class="bubble twitty">Twitty: Luvyewww Thangapilla 💗</div>
+            <div class="bubble darla">Darla: luvyewww too ammu😌</div>
+        </div>
+
+        <a class="btn-start" onclick="startGame()">Start Journey</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script>
+        // --- Background Hearts ---
+        function spawnHearts() {
+            const container = document.getElementById('hearts-container');
+            const icons = ['💗', '❤️', '💖', '💕', '🤍'];
+
+            for (let i = 0; i < 50; i++) {
+                let h = document.createElement('div');
+                h.classList.add('heart-particle');
+                h.innerText = icons[Math.floor(Math.random() * icons.length)];
+                h.style.left = Math.random() * 100 + '%';
+                h.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                h.style.animationDelay = (Math.random() * 5) + 's';
+                h.style.fontSize = (Math.random() * 2 + 1.5) + 'rem';
+                container.appendChild(h);
+            }
+        }
+        spawnHearts();
+
+        // --- Music ---
+        const music = document.getElementById('bg-music');
+        let isPlaying = false;
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                document.querySelector('.music-pill i').className = 'fas fa-music';
+            } else {
+                music.play().catch(() => alert("Tap anywhere first!")); // Chrome policy
+                document.querySelector('.music-pill i').className = 'fas fa-pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- Start ---
+        function startGame() {
+            sessionStorage.setItem('gameActive', 'true');
+            // Soft fade out
+            gsap.to('.love-card', {
+                y: -50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power2.in",
+                onComplete: () => window.location.href = 'level1.html'
+            });
+        }
+    </script>
+</body>
+
+</html>

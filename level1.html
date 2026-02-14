@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Love Quest - Level 1</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=Quicksand:wght@400;500;600&family=Dancing+Script:wght@500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            /* Soft White Fallback */
+            --pastel-pink: #FFD1DC;
+            --pastel-peach: #FFDAC1;
+            --pastel-lavender: #E6E6FA;
+            --rose-gold: #B76E79;
+            --text-dark: #6D6D6D;
+            --soft-white: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom right, #FFF1EB, #ACE0F9);
+            /* Warm Peach to Soft Blue */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+        }
+
+        /* Floating Hearts Background (Reused) */
+        .hearts-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart-particle {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.6);
+            /* Slightly more visible */
+            font-size: 1.5rem;
+            animation: rise 10s infinite ease-in;
+            opacity: 0;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(110vh) scale(0.8);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Main Game Card */
+        .game-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 450px;
+            /* Slightly narrower specifically for mobile readability */
+            min-height: 600px;
+            background: var(--soft-white);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(183, 110, 121, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            /* For inner animations */
+        }
+
+        /* Header / Progress */
+        .progress-indicator {
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Question Content Container */
+        .question-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Illustrations/GIFs */
+        .question-visual {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            object-fit: cover;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 4px solid white;
+            background-color: #fce4ec;
+            /* Placeholder pink */
+        }
+
+        /* Question Text */
+        .question-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #5d4037;
+            /* Warm brown */
+            margin-bottom: 30px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        /* Input Area (Textarea for open-ended) */
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #eee;
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            color: #555;
+            resize: none;
+            outline: none;
+            transition: 0.3s;
+            margin-bottom: 20px;
+            min-height: 80px;
+        }
+
+        .answer-input:focus {
+            border-color: var(--pastel-pink);
+            box-shadow: 0 0 10px rgba(255, 209, 220, 0.4);
+        }
+
+        /* Options for specific questions (if any) */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .option-btn {
+            background: white;
+            border: 1px solid #ffd1dc;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: var(--text-dark);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-btn:hover {
+            background: #fff0f5;
+            transform: translateX(5px);
+            border-color: var(--rose-gold);
+        }
+
+        .option-btn.selected {
+            background: var(--pastel-pink);
+            color: white;
+            border-color: var(--rose-gold);
+        }
+
+        /* Next / Submit Button */
+        .btn-next {
+            background: linear-gradient(135deg, #FFD1DC 0%, #B76E79 100%);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(183, 110, 121, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: auto;
+            /* Push to bottom if flex space allows */
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(183, 110, 121, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-next:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Feedback Popup */
+        .feedback-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            background: white;
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            border: 2px solid var(--pastel-pink);
+            min-width: 200px;
+        }
+
+        .feedback-popup.active {
+            animation: popIn 2s forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            30% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+
+        .feedback-text {
+            color: var(--rose-gold);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        /* Burst Particle container */
+        .burst-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        /* Music Toggle */
+        .music-pill {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            transition: 0.3s;
+            z-index: 50;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music" loop src="assets/music.mp3"></audio>
+    <div class="music-pill" onclick="toggleMusic()">
+        <i class="fas fa-music"></i> <span>Music On/Off</span>
+    </div>
+
+    <div class="hearts-bg" id="hearts-container"></div>
+    <div class="burst-container" id="burst-container"></div>
+
+    <div class="game-card">
+        <div class="progress-indicator" id="progress">
+            <span>💗</span> <span id="q-number">1</span>/<span id="total-q">9</span>
+        </div>
+
+        <div class="question-container" id="question-box">
+            <!-- Content Injected via JS -->
+        </div>
+
+        <div class="feedback-popup" id="feedback">
+            <p class="feedback-text">So sweet! 💖</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script>
+        // --- Questions Data ---
+        const questions = [
+            {
+                text: "When did you realize I’m ‘the one’? 💞",
+                img: "assets/images/level1/q1.gif",
+                type: "options",
+                options: [
+                    "The first time I saw you 😍",
+                    "Our first long talk 🥺",
+                    "When I couldn’t imagine life without you 💗",
+                    "Every single day since ❤️"
+                ],
+                feedback: "Awww 🥺💗"
+            },
+            {
+                text: "What small thing about me makes you smile every time? 😊",
+                img: "assets/images/level1/q2.gif",
+                type: "options",
+                options: [
+                    "Your voice 💕",
+                    "Your silly expressions 😆",
+                    "Your caring messages 🫶",
+                    "Everything about you 😘"
+                ],
+                feedback: "You noticed that? 🥺"
+            },
+            {
+                text: "Our most unforgettable memory together? 🌸",
+                img: "assets/images/level1/q3.gif",
+                type: "options",
+                options: [
+                    "Our first date ✨",
+                    "Late-night talks 🌙",
+                    "Laughing till we cried 😂",
+                    "All moments with you 💞"
+                ],
+                feedback: "That’s us 😘"
+            },
+            {
+                text: "When I’m sad, what do you want to do for me? 🫶",
+                img: "assets/images/level1/q4.gif",
+                type: "options",
+                options: [
+                    "Hug you forever 🤗",
+                    "Make you smile 😘",
+                    "Listen to you patiently 😌",
+                    "All of the above 💗"
+                ],
+                feedback: "You're my safe place 🏡"
+            },
+            {
+                text: "What makes our love special after 9 years? ✨",
+                img: "assets/images/level1/q5.gif",
+                type: "options",
+                options: [
+                    "Trust 🤍",
+                    "Understanding 💬",
+                    "Friendship 💛",
+                    "Everything together 💍"
+                ],
+                feedback: "Forever vibes ✨"
+            },
+            {
+                text: "If we had one perfect day together, what would we do? ☀️",
+                img: "assets/images/level1/q6.gif",
+                type: "options",
+                options: [
+                    "Travel somewhere 🌍",
+                    "Movie + cuddles 🎬",
+                    "Long walk + talks 🚶‍♂️",
+                    "Anything with you 💕"
+                ],
+                feedback: "Let's make it happen 📅"
+            },
+            {
+                text: "Will you choose me again in every lifetime? 💍",
+                img: "assets/images/level1/q7.gif",
+                type: "options",
+                options: [
+                    "Always 💖",
+                    "Without thinking 😌",
+                    "Forever and more 🥺",
+                    "Every universe 🌌"
+                ],
+                feedback: "I chose you too 🥺💖"
+            },
+            {
+                text: "Who misses more when we’re apart? 🥺",
+                img: "assets/images/level1/q8.gif", /* Placeholder if needed */
+                type: "options",
+                options: [
+                    "Me 😢",
+                    "You 😘",
+                    "Both 😍",
+                    "Impossible to measure 💞"
+                ],
+                feedback: "Always missing you 🥺"
+            },
+            {
+                text: "What am I to you? 💗",
+                img: "assets/images/level1/q9.gif", /* Placeholder if needed */
+                type: "options",
+                options: [
+                    "My best friend 🤝",
+                    "My safe place 🏡",
+                    "My love ❤️",
+                    "My forever 💍"
+                ],
+                feedback: "You know me so well 💞"
+            }
+        ];
+
+        let currentQIndex = 0;
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            spawnHearts();
+            loadQuestion(0);
+
+            // Check music state from previous page
+            if (sessionStorage.getItem('gameActive') === 'true') {
+                // Try auto-play if interaction happened
+                const music = document.getElementById('bg-music');
+                // music.play().catch(e => console.log("Audio waiting for interaction"));
+            }
+        });
+
+        // --- Render Question ---
+        function loadQuestion(index) {
+            const q = questions[index];
+            const container = document.getElementById('question-box');
+
+            // Update Progress
+            document.getElementById('q-number').innerText = index + 1;
+            document.getElementById('total-q').innerText = questions.length; // Ensure total is dynamic or 9
+
+            // Build HTML
+            // Note: Changed fallback to use standard placeholder if gif missing
+            let html = `
+                <img src="${q.img}" onerror="this.src='https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60'" class="question-visual" alt="Love Image">
+                <div class="question-text">${q.text}</div>
+            `;
+
+            if (q.type === 'options') {
+                html += `<div class="options-grid">`;
+                q.options.forEach(opt => {
+                    html += `<button class="option-btn" onclick="handleAnswer(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+                });
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+
+            // Animate In
+            gsap.fromTo(container,
+                { opacity: 0, x: 50 },
+                { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }
+            );
+        }
+
+        // --- Interaction ---
+        function handleAnswer(element, value) {
+            // 0. Save Answer
+            if (value) {
+                // Save to session storage for later levels/summary
+                let answers = JSON.parse(sessionStorage.getItem('loveQuestAnswers') || '{}');
+                answers[`q${currentQIndex + 1}`] = value;
+                sessionStorage.setItem('loveQuestAnswers', JSON.stringify(answers));
+            }
+
+            // 1. Visual Selection Logic
+            if (element) {
+                element.classList.add('selected');
+                // Disable all other buttons to prevent double clicks
+                let allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(btn => btn.style.pointerEvents = 'none');
+            }
+
+            // 2. Hearts Burst
+            spawnBurst();
+
+            // 3. Feedback Popup
+            showFeedback(questions[currentQIndex].feedback);
+
+            // 4. Wait & Next (Trigger exit anim)
+            setTimeout(() => {
+                nextQuestion();
+            }, 1500);
+        }
+
+        function showFeedback(text) {
+            const popup = document.getElementById('feedback');
+            popup.querySelector('.feedback-text').innerText = text;
+            popup.classList.add('active');
+
+            // Reset class after animation
+            setTimeout(() => {
+                popup.classList.remove('active');
+            }, 2000);
+        }
+
+        function nextQuestion() {
+            const container = document.getElementById('question-box');
+
+            // Exit Animation
+            gsap.to(container, {
+                opacity: 0,
+                x: -50,
+                duration: 0.4,
+                onComplete: () => {
+                    if (currentQIndex < questions.length - 1) {
+                        currentQIndex++;
+                        loadQuestion(currentQIndex);
+                    } else {
+                        showFinalScreen();
+                    }
+                }
+            });
+        }
+
+        function showFinalScreen() {
+            const container = document.getElementById('question-box');
+            const progress = document.getElementById('progress');
+            progress.style.display = 'none';
+
+            container.innerHTML = `
+                <div style="width: 100%;">
+                    <div class="couple-img" style="margin: 0 auto 20px auto; width: 200px; height: 200px;">
+                        <img src="assets/images/index_page/Holding_hands.jpeg" 
+                             onerror="this.src='https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60'" 
+                             alt="Us" 
+                             style="width:100%; height:100%; object-fit:cover; border-radius:50%; border: 4px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    </div>
+                    
+                    <h1 style="color:var(--rose-gold); font-family: 'Dancing Script', cursive; font-size:2.5rem; margin-bottom: 10px;">9 Questions. 9 Years.</h1>
+                    <h2 style="color:#888; font-size: 1.2rem; margin-bottom: 20px; font-weight: normal;">One Love. 💗</h2>
+                    
+                    <p style="font-size:1.1rem; color:#5d4037; margin-bottom: 30px; line-height: 1.6; font-style: italic;">
+                        Thank you for choosing me every day, Darla.<br>
+                        I’m always yours. <br>
+                        — Twitty 💞
+                    </p>
+
+                    <button class="btn-next" onclick="goToNextLevel()">Continue Journey ✨</button>
+                </div>
+             `;
+
+            // animate In explicitly since previous opacity was 0
+            gsap.fromTo(container,
+                { opacity: 0, y: 20, x: 0 },
+                { opacity: 1, y: 0, x: 0, duration: 0.8, ease: "power2.out" }
+            );
+
+            spawnBurst();
+            spawnBurst();
+        }
+
+        function goToNextLevel() {
+            gsap.to('.game-card', {
+                y: -50,
+                opacity: 0,
+                duration: 0.8,
+                onComplete: () => window.location.href = 'level2.html'
+            });
+        }
+
+        // --- Effects ---
+        function spawnHearts() {
+            const container = document.getElementById('hearts-container');
+            const icons = ['💗', '❤️', '💖', '💕', '🤍'];
+
+            for (let i = 0; i < 40; i++) {
+                let h = document.createElement('div');
+                h.classList.add('heart-particle');
+                h.innerText = icons[Math.floor(Math.random() * icons.length)];
+                h.style.left = Math.random() * 100 + '%';
+                h.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                h.style.animationDelay = (Math.random() * 5) + 's';
+                h.style.fontSize = (Math.random() * 2 + 1.5) + 'rem';
+                container.appendChild(h);
+            }
+        }
+
+        function spawnBurst() {
+            const container = document.getElementById('burst-container');
+            const icons = ['💖', '✨', '🌸', '😍'];
+
+            // Create 15 bursting particles from center (or random if generic)
+            for (let i = 0; i < 15; i++) {
+                let p = document.createElement('div');
+                p.innerText = icons[Math.floor(Math.random() * icons.length)];
+                p.style.position = 'absolute';
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.fontSize = '1.5rem';
+                p.style.pointerEvents = 'none';
+                container.appendChild(p);
+
+                // Explode animation
+                gsap.to(p, {
+                    x: (Math.random() - 0.5) * 400,
+                    y: (Math.random() - 0.5) * 400,
+                    opacity: 0,
+                    scale: 0.5,
+                    duration: 1.5,
+                    ease: "power2.out",
+                    onComplete: () => p.remove()
+                });
+            }
+        }
+
+        // --- Music ---
+        const music = document.getElementById('bg-music');
+        let isPlaying = false;
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                document.querySelector('.music-pill i').className = 'fas fa-music';
+            } else {
+                music.play().catch(() => alert("Tap anywhere first!"));
+                document.querySelector('.music-pill i').className = 'fas fa-pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+    </script>
+</body>
+
+</html>

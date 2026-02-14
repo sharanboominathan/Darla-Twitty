@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Level 2 - Our Story</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=Quicksand:wght@400;500;600&family=Dancing+Script:wght@500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            /* Soft White Fallback */
+            --pastel-pink: #FFD1DC;
+            --pastel-peach: #FFDAC1;
+            --pastel-lavender: #E6E6FA;
+            --rose-gold: #B76E79;
+            --text-dark: #6D6D6D;
+            --soft-white: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom right, #FFF1EB, #ACE0F9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+        }
+
+        /* Floating Hearts Background (Consistent) */
+        .hearts-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart-particle {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.6);
+            font-size: 1.5rem;
+            animation: rise 10s infinite ease-in;
+            opacity: 0;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(110vh) scale(0.8);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Main Story Card */
+        .story-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 500px;
+            min-height: 650px;
+            background: var(--soft-white);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(183, 110, 121, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Progress Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--rose-gold);
+            font-weight: 600;
+        }
+
+        .level-badge {
+            background: rgba(255, 209, 220, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid var(--pastel-pink);
+        }
+
+        /* Story Slide Container */
+        .slide-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(50px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.exit-left {
+            transform: translateX(-50px);
+            opacity: 0;
+        }
+
+        /* Photo Frame */
+        .photo-frame {
+            width: 260px;
+            height: 260px;
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-frame:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 0 15px 30px rgba(183, 110, 121, 0.2);
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            background-color: #fce4ec;
+        }
+
+        /* File Input (Hidden) */
+        .photo-upload {
+            display: none;
+        }
+
+        /* Typography */
+        .chapter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--rose-gold);
+            margin: 0 0 10px 0;
+        }
+
+        .story-text {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem;
+            color: #5d4037;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            min-height: 60px;
+            /* Prevent layout shift */
+        }
+
+        /* Next Button */
+        .btn-next {
+            background: linear-gradient(135deg, #FFD1DC 0%, #B76E79 100%);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(183, 110, 121, 0.3);
+            transition: all 0.3s ease;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(183, 110, 121, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* Music Toggle */
+        .music-pill {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            transition: 0.3s;
+            z-index: 50;
+        }
+
+        /* Burst Container */
+        .burst-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Typewriter Cursor */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: #5d4037;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Final Message */
+        .final-msg {
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music" loop src="assets/music.mp3"></audio>
+    <div class="music-pill" onclick="toggleMusic()">
+        <i class="fas fa-music"></i> <span>Music On/Off</span>
+    </div>
+
+    <div class="hearts-bg" id="hearts-container"></div>
+    <div class="burst-container" id="burst-container"></div>
+
+    <div class="story-card">
+        <div class="header">
+            <div class="level-badge">Level 2: Our Story Manga 📖</div>
+            <div class="progress">💗 <span id="current-ch">1</span>/9</div>
+        </div>
+
+        <div class="slide-container" id="slide-container">
+            <!-- Slides Injected Here -->
+        </div>
+
+        <button class="btn-next" id="next-btn" onclick="nextChapter()">
+            Next Page <i class="fas fa-chevron-right" style="margin-left:5px;"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script>
+        // --- Story Data ---
+        const chapters = [
+            {
+                title: "Chapter 1: Our First Meet ☕💗",
+                text: "The day our eyes met, our story quietly began…",
+                imgPlaceholder: "assets/images/level2/first_meet.jpeg",
+                btnText: "How it started..."
+            },
+            {
+                title: "Chapter 2: Love Blossomed 🌸",
+                text: "Somewhere between talks and smiles, love found us.",
+                imgPlaceholder: "assets/images/level2/mirror_pic.jpeg",
+                btnText: "And then..."
+            },
+            {
+                title: "Chapter 3: Happy Roams 🌍😄",
+                text: "Every place felt special when we were together.",
+                imgPlaceholder: "assets/images/level2/happy_roams.jpeg",
+                btnText: "Adventures..."
+            },
+            {
+                title: "Chapter 4: The Break 💔",
+                text: "Distance tested us, but never broke our bond.",
+                imgPlaceholder: "assets/images/level2/cosy.jpeg",
+                btnText: "We held on..."
+            },
+            {
+                title: "Chapter 5: Missing You 🥺💞",
+                text: "Every day apart made me love you more.",
+                imgPlaceholder: "assets/images/level2/shy's.jpeg",
+                btnText: "Longing..."
+            },
+            {
+                title: "Chapter 6: Rebonding 🔗❤️",
+                text: "We found our way back… stronger than ever.",
+                imgPlaceholder: "assets/images/level2/hugs.jpeg",
+                btnText: "Reunited..."
+            },
+            {
+                title: "Chapter 7: Understanding & Struggles 🤍",
+                text: "We learned to listen, grow, and hold on.",
+                imgPlaceholder: "assets/images/level2/candid.jpeg",
+                btnText: "Growing..."
+            },
+            {
+                title: "Chapter 8: Closeness & Trust 🫶✨",
+                text: "You became my safe place.",
+                imgPlaceholder: "assets/images/level2/pizza_date.jpeg",
+                btnText: "My home..."
+            },
+            {
+                title: "Chapter 9: Together Forever 💍💖",
+                text: "Every lifetime, every version of me chooses you.",
+                imgPlaceholder: "assets/images/level2/temple.jpeg",
+                btnText: "Forever..."
+            }
+        ];
+
+        let currentIdx = 0;
+        let isTyping = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            spawnHearts();
+            renderSlides();
+            // Check music state
+            if (sessionStorage.getItem('gameActive') === 'true') {
+                const music = document.getElementById('bg-music');
+                // music.play().catch(() => {});
+            }
+        });
+
+        function renderSlides() {
+            const container = document.getElementById('slide-container');
+            container.innerHTML = ''; // Clear
+
+            chapters.forEach((ch, index) => {
+                const isActive = index === 0 ? 'active' : '';
+                const slide = document.createElement('div');
+                slide.className = `slide ${isActive}`;
+                slide.id = `slide-${index}`;
+
+                // Allow user to click image to change it (using hidden file input)
+                slide.innerHTML = `
+                    <div class="photo-frame" onclick="triggerUpload(${index})">
+                        <img src="${ch.imgPlaceholder}" 
+                             onerror="this.src='https://images.unsplash.com/photo-1522673607200-1645062cd958?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60'" 
+                             id="img-${index}" class="photo-img" alt="Story Photo">
+                             
+                        <input type="file" id="upload-${index}" class="photo-upload" accept="image/*" onchange="previewImage(this, ${index})">
+                        
+                        <div style="position:absolute; bottom:10px; right:10px; background:white; padding:5px; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+                             <i class="fas fa-camera" style="font-size:14px; color:#aaa;"></i>
+                        </div>
+                    </div>
+                    <h2 class="chapter-title">${ch.title}</h2>
+                    <p class="story-text" id="text-${index}"></p> 
+                `;
+                container.appendChild(slide);
+            });
+
+            // Start Typing Effect for first slide
+            typeWriter(0);
+            updateButton(0);
+        }
+
+        function triggerUpload(index) {
+            document.getElementById(`upload-${index}`).click();
+        }
+
+        function previewImage(input, index) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(`img-${index}`).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function typeWriter(index) {
+            const textElement = document.getElementById(`text-${index}`);
+            const text = chapters[index].text;
+            textElement.innerHTML = ''; // Clear
+            let i = 0;
+            isTyping = true;
+
+            function type() {
+                if (i < text.length) {
+                    textElement.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 50); // Typing speed
+                } else {
+                    isTyping = false;
+                }
+            }
+            type();
+        }
+
+        function updateButton(index) {
+            const btn = document.getElementById('next-btn');
+            if (index < chapters.length) {
+                btn.innerHTML = `${chapters[index].btnText} <i class="fas fa-chevron-right"></i>`;
+            }
+        }
+
+        function nextChapter() {
+            if (isTyping) {
+                // Instant finish typing if clicked during typing
+                const textElement = document.getElementById(`text-${currentIdx}`);
+                textElement.innerHTML = chapters[currentIdx].text;
+                isTyping = false;
+                return;
+            };
+
+            spawnBurst(); // Effect
+
+            const currentSlide = document.getElementById(`slide-${currentIdx}`);
+
+            if (currentIdx < chapters.length - 1) {
+                // Animate Out
+                gsap.to(currentSlide, {
+                    x: -50,
+                    opacity: 0,
+                    duration: 0.5,
+                    onComplete: () => {
+                        currentSlide.classList.remove('active');
+                        // currentSlide.style.transform = 'translateX(50px)'; // Reset pos for reuse logic if needed
+
+                        currentIdx++;
+                        const nextSlide = document.getElementById(`slide-${currentIdx}`);
+                        nextSlide.classList.add('active');
+
+                        // Update Progress
+                        document.getElementById('current-ch').innerText = currentIdx + 1;
+
+                        // Animate In
+                        gsap.fromTo(nextSlide,
+                            { x: 50, opacity: 0 },
+                            { x: 0, opacity: 1, duration: 0.5 }
+                        );
+
+                        // Start Typing
+                        typeWriter(currentIdx);
+                        updateButton(currentIdx);
+                    }
+                });
+            } else {
+                finishLevel();
+            }
+        }
+
+        function finishLevel() {
+            const container = document.querySelector('.story-card');
+            container.innerHTML = `
+                <div class="final-msg" style="text-align:center; padding: 20px; animation: fadeIn 1s ease-out;">
+                     <h1 style="font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--rose-gold); margin-bottom: 20px;">9 Chapters. 9 Years.</h1>
+                     <h2 style="font-family: 'Quicksand', sans-serif; font-size: 1.5rem; color: #5d4037; font-weight:normal; margin-bottom: 30px;">One Forever. 💗</h2>
+                     
+                     <div style="font-size: 4rem; margin-bottom: 40px; animation: float 3s infinite ease-in-out;">💍</div>
+                     
+                     <button class="btn-next" onclick="goToLevel3()">Continue Journey <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <style>
+                    @keyframes float {
+                        0% { transform: translateY(0px); }
+                        50% { transform: translateY(-15px); }
+                        100% { transform: translateY(0px); }
+                    }
+                </style>
+             `;
+
+            // Confetti
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    spawnBurst();
+                    // create random burst positions
+                    const b = document.createElement('div');
+                    // ... simplicity: reuse spawnBurst logic at center
+                }, i * 200);
+            }
+        }
+
+        function goToLevel3() {
+            gsap.to('.story-card', {
+                y: -50,
+                opacity: 0,
+                duration: 0.8,
+                onComplete: () => window.location.href = 'level3.html'
+            });
+        }
+
+        // --- Effects ---
+        function spawnHearts() {
+            const container = document.getElementById('hearts-container');
+            const icons = ['💗', '❤️', '💖', '💕', '🤍'];
+
+            for (let i = 0; i < 40; i++) {
+                let h = document.createElement('div');
+                h.classList.add('heart-particle');
+                h.innerText = icons[Math.floor(Math.random() * icons.length)];
+                h.style.left = Math.random() * 100 + '%';
+                h.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                h.style.animationDelay = (Math.random() * 5) + 's';
+                h.style.fontSize = (Math.random() * 2 + 1.5) + 'rem';
+                container.appendChild(h);
+            }
+        }
+
+        function spawnBurst() {
+            const container = document.getElementById('burst-container');
+            const icons = ['✨', '🌸', '💫'];
+            const rect = document.querySelector('.btn-next').getBoundingClientRect();
+
+            for (let i = 0; i < 10; i++) {
+                let p = document.createElement('div');
+                p.innerText = icons[Math.floor(Math.random() * icons.length)];
+                p.style.position = 'absolute';
+                p.style.left = (rect.left + rect.width / 2) + 'px';
+                p.style.top = (rect.top + rect.height / 2) + 'px';
+                p.style.fontSize = '1.2rem';
+                p.style.pointerEvents = 'none';
+                container.appendChild(p);
+
+                gsap.to(p, {
+                    x: (Math.random() - 0.5) * 200,
+                    y: (Math.random() - 1) * 200, // Move up mostly
+                    opacity: 0,
+                    duration: 1,
+                    onComplete: () => p.remove()
+                });
+            }
+        }
+
+        // --- Music ---
+        const music = document.getElementById('bg-music');
+        let isPlaying = false;
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                document.querySelector('.music-pill i').className = 'fas fa-music';
+            } else {
+                music.play().catch(() => alert("Tap anywhere first!"));
+                document.querySelector('.music-pill i').className = 'fas fa-pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Level 5</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .letter-container {
+            width: 100%;
+            height: 60vh;
+            overflow-y: auto;
+            background: #fffcf0;
+            padding: 30px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .type-cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="level-badge">Level 5: The Message ✉️</div>
+
+    <div class="game-container fade-in">
+        <div class="letter-container" id="letter"></div>
+        <button id="next-btn" class="btn-game hidden" onclick="finishGame()">Boss Level! 💍</button>
+    </div>
+
+    <script>
+        const message = "My Dearest Darla,\n\nWe've played this game of life together for 9 incredible years.\nFrom our silly first messages to our biggest dreams, every level with you has been my favorite.\n\nBut there is one final quest remaining...\n\nAre you ready?\n\nLove,\nTwitty ❤️";
+        const speed = 50;
+        const el = document.getElementById('letter');
+        let i = 0;
+
+        function typeWriter() {
+            if (i < message.length) {
+                const char = message.charAt(i);
+                el.innerHTML += char === '\n' ? '<br>' : char;
+                i++;
+                // Auto scroll
+                el.scrollTop = el.scrollHeight;
+                setTimeout(typeWriter, speed);
+            } else {
+                document.getElementById('next-btn').classList.remove('hidden');
+            }
+        }
+
+        window.onload = typeWriter;
+
+        function finishGame() {
+            window.location.href = 'final.html';
+        }
+
+        if (!sessionStorage.getItem('gameActive')) window.location.href = 'index.html';
+    </script>
+</body>
+
+</html>

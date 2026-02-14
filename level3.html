@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitty & Darla: Level 3 - Timeline of Us</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=Quicksand:wght@400;500;600&family=Dancing+Script:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            --pastel-pink: #FFD1DC;
+            --pastel-peach: #FFDAC1;
+            --pastel-lavender: #E6E6FA;
+            --rose-gold: #B76E79;
+            --text-dark: #6D6D6D;
+            --soft-white: rgba(255, 255, 255, 0.90);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom right, #FFF1EB, #E6E6FA, #ACE0F9);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Floating Hearts Background */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .heart-particle {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.5);
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .timeline-container {
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto 40px auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: var(--rose-gold);
+            border: 1px solid var(--pastel-pink);
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(183, 110, 121, 0.1);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--rose-gold);
+            margin: 10px 0;
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #888;
+        }
+
+        /* Timeline List */
+        .timeline-list {
+            position: relative;
+            padding-bottom: 100px;
+            /* Space for footer */
+        }
+
+        /* Vertical Line */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--pastel-pink), var(--rose-gold), transparent);
+            transform: translateX(-50%);
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        /* Memory Card */
+        .memory-card {
+            position: relative;
+            background: var(--soft-white);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin: 25px 0;
+            box-shadow: 0 10px 30px rgba(183, 110, 121, 0.1);
+            border: var(--glass-border);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: flex-start;
+            /* Changed to start for better multiline/image layout */
+            gap: 20px;
+            opacity: 0.9;
+            transform: scale(0.98);
+            z-index: 2;
+        }
+
+        .memory-card.locked {
+            filter: grayscale(100%);
+            opacity: 0.8;
+            /* Increased from 0.6 for better visibility */
+            background: rgba(255, 255, 255, 0.7);
+            /* Ensure background is visible */
+        }
+
+        .memory-card.unlocked {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--pastel-pink);
+            box-shadow: 0 15px 40px rgba(255, 105, 180, 0.2);
+        }
+
+        .memory-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Badge & Year */
+        .year-badge {
+            background: var(--pastel-pink);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.4);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--rose-gold);
+            box-shadow: 0 5px 15px rgba(183, 110, 121, 0.15);
+            flex-shrink: 0;
+            margin-top: 5px;
+            /* Alignment fix */
+        }
+
+        .content {
+            flex-grow: 1;
+        }
+
+        .content h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: #5d4037;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .content p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #777;
+            line-height: 1.5;
+        }
+
+        .status-check {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            opacity: 0;
+            transform: scale(0);
+            transition: 0.3s;
+            margin-top: 15px;
+            /* Align with content */
+        }
+
+        .memory-card.unlocked .status-check {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Photo Placeholder */
+        .mini-photo {
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+            /* Hidden by default */
+            width: 100%;
+            max-width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .memory-card.unlocked .mini-photo {
+            display: block;
+            animation: fadeInPhoto 0.6s ease-out;
+        }
+
+        .mini-photo img {
+            width: 100%;
+            display: block;
+        }
+
+        @keyframes fadeInPhoto {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Shake Animation */
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateX(5px) rotate(2deg);
+            }
+
+            75% {
+                transform: translateX(-5px) rotate(-2deg);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Completion Section */
+        #completion-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(183, 110, 121, 0.15);
+            /* Warmer shadow */
+            margin-top: 30px;
+            animation: zoomIn 0.8s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .btn-continue {
+            background: linear-gradient(135deg, #FFD1DC 0%, #B76E79 100%);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(183, 110, 121, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 25px;
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(183, 110, 121, 0.4);
+        }
+
+        /* Music Pill */
+        .music-pill {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            transition: 0.3s;
+            z-index: 100;
+            border: 1px solid white;
+        }
+
+        .music-pill:hover {
+            background: white;
+            color: var(--rose-gold);
+        }
+
+        /* Fade In */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toast Message */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: rgba(255, 105, 180, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music" loop src="assets/music.mp3"></audio>
+    <div class="music-pill" onclick="toggleMusic()">
+        <i class="fas fa-music"></i> <span>Music On/Off</span>
+    </div>
+
+    <!-- Background Effects -->
+    <div class="hearts-bg" id="hearts-bg"></div>
+
+    <div class="timeline-container">
+        <div class="header-section">
+            <div class="level-badge">Level 3</div>
+            <h1>Timeline of Us ⏳</h1>
+            <!-- Subtitle removed from here to appear only at end if preferred, or keep as intro -->
+        </div>
+
+        <div class="timeline-list" id="timeline-list">
+            <div class="timeline-line"></div>
+            <!-- Milestones will be injected here -->
+        </div>
+
+        <div id="completion-screen">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--rose-gold);">Forever &
+                Always
+                💍</h2>
+            <p style="font-size: 1.1rem; color: #555;">Every year with you is my favorite chapter 💗</p>
+            <button class="btn-continue" onclick="nextLevel()">Continue Journey ➡️</button>
+        </div>
+    </div>
+
+    <div id="toast">One memory at a time 😘</div>
+
+    <script>
+        // Override console logging to show on screen
+        const debugConsole = document.getElementById('debug-console');
+        function scrollBottom() {
+            if (debugConsole) debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+        function logToScreen(msg, type = 'LOG') {
+            if (!debugConsole) return;
+            const div = document.createElement('div');
+            div.style.color = type === 'ERROR' ? 'red' : (type === 'WARN' ? 'yellow' : 'lime');
+            div.innerText = `[${type}] ${msg}`;
+            debugConsole.appendChild(div);
+            scrollBottom();
+        }
+
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+
+        console.log = function (...args) { originalLog(...args); logToScreen(args.join(' ')); };
+        console.warn = function (...args) { originalWarn(...args); logToScreen(args.join(' '), 'WARN'); };
+        console.error = function (...args) { originalError(...args); logToScreen(args.join(' '), 'ERROR'); };
+
+        window.onerror = function (msg, url, line) {
+            logToScreen(`${msg} @ ${line}`, 'ERROR');
+            return false;
+        };
+
+        // --- Data ---
+        // Editable: Add 'image' property with URL (e.g. 'assets/photo1.jpg') to show photos.
+        const milestones = [
+            { year: 2015, title: "Our First Date 🌹", desc: "\"The moment my life changed forever.\"", icon: "❤️", image: "assets/images/level2/first_meet.jpeg" },
+            { year: 2016, title: "Learning Together 💬", desc: "\"We grew through every conversation.\"", icon: "🌱", image: "assets/images/level3/img2.jpeg" },
+            { year: 2017, title: "Endless Laughs 😂", desc: "\"Your smile is my favorite sound.\"", icon: "✨", image: "assets/images/level3/img3.jpeg" },
+            { year: 2018, title: "Big Trip ✈️", desc: "\"Adventures are better with you.\"", icon: "🌍", image: "assets/images/level3/park.jpeg" },
+            { year: 2019, title: "Stronger Bond 🤍", desc: "\"Hand in hand, through it all.\"", icon: "🔗", image: "assets/images/level3/eye_contact.jpeg" },
+            { year: 2020, title: "Supporting Each Other 🫶", desc: "\"You are my rock, my safe place.\"", icon: "🤝", image: "assets/images/level2/hugs.jpeg" },
+            { year: 2021, title: "New Dreams 🌱", desc: "\"Building a future, one dream at a time.\"", icon: "🏡", image: "assets/images/level3/cinematic.jpeg" },
+            { year: 2023, title: "Best Friends in Love 💕", desc: "\"My partner in crime, my love.\"", icon: "👩‍❤️‍👨", image: "assets/images/level3/movie_date.jpeg" },
+            { year: 2024, title: "Forever Mode 💍", desc: "\"Just you and me, forever.\"", icon: "💒", image: "assets/images/level3/img1.jpeg" }
+        ];
+
+        let unlockedIndex = 0; // The index of the next locked item. 
+        // Index 0 is visually "normal" but conceptually "locked" until clicked?
+        // User says: "User taps milestones in order... When clicked correctly: Card softly glows".
+        // So yes, click is required to "activate" it.
+
+        const list = document.getElementById('timeline-list');
+        // const clickSound = new Audio('assets/click.mp3'); 
+
+        // --- Render ---
+        function renderTimeline() {
+            list.innerHTML = '<div class="timeline-line"></div>'; // Reset
+
+            milestones.forEach((m, index) => {
+                const el = document.createElement('div');
+                el.className = `memory-card`;
+                el.style.position = "relative"; // Ensure positioning
+                el.style.zIndex = "2"; // Ensure it's above line/bg
+
+                // Init state: All "locked" (gray) except the one we are waiting for?
+                // Or maybe just show them all gray?
+                // Let's make index 0 NOT 'locked' class so it looks inviting, but still needs click to become 'unlocked' (glow).
+                if (index > 0) el.classList.add('locked');
+
+                // Use addEventListener instead of inline onclick for better reliability and scope access
+                el.addEventListener('click', function (e) {
+                    handleCardClick(index, this);
+                });
+
+                // Check for image
+                const imgHTML = m.image ? `<div class="mini-photo"><img src="${m.image}" alt="Memory" onerror="this.src='https://via.placeholder.com/200/FFB6C1/FFF?text=Memory'"></div>` : '';
+
+                el.innerHTML = `
+                    <div class="year-badge">${m.year}</div>
+                    <div class="icon-box">${m.icon}</div>
+                    <div class="content">
+                        <h3>${m.title}</h3>
+                        <p>${m.desc}</p>
+                        ${imgHTML}
+                    </div>
+                    <div class="status-check"><i class="fas fa-check-circle"></i></div>
+                `;
+
+                // Simplified initial state - no reliance on GSAP for visibility entrance
+                // This ensures cards are ALWAYS visible immediately
+                el.style.opacity = 1;
+                el.style.transform = 'translateY(0)';
+
+                list.appendChild(el);
+            });
+        }
+
+        // --- Interaction ---
+        function handleCardClick(index, card) {
+            // Can only click the card at unlockedIndex
+            if (index === unlockedIndex) {
+                // Success
+                unlockCard(card);
+                unlockedIndex++;
+
+                // Unlock next one visually
+                if (unlockedIndex < milestones.length) {
+                    const nextCard = list.querySelectorAll('.memory-card')[unlockedIndex];
+                    if (nextCard) {
+                        nextCard.classList.remove('locked');
+
+                        // distinct animation for "now active"
+                        if (typeof gsap !== 'undefined') {
+                            gsap.fromTo(nextCard, { scale: 0.95 }, { scale: 1, duration: 0.3 });
+                        }
+
+                        nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    // All done
+                    setTimeout(showCompletion, 800);
+                }
+
+            } else if (index > unlockedIndex) {
+                // Too early
+                shakeCard(card);
+                showToast("Unlock the previous memory first! �");
+            } else {
+                // Already unlocked
+                if (typeof gsap !== 'undefined') {
+                    gsap.fromTo(card, { scale: 1 }, { scale: 1.02, duration: 0.2, yoyo: true, repeat: 1 });
+                }
+            }
+        }
+
+        function unlockCard(card) {
+            card.classList.add('unlocked');
+
+            // Sparkle effect
+            if (typeof confetti !== 'undefined') {
+                try {
+                    confetti({
+                        particleCount: 25,
+                        spread: 40,
+                        origin: {
+                            x: card.getBoundingClientRect().left / window.innerWidth + 0.1,
+                            y: card.getBoundingClientRect().top / window.innerHeight + 0.05
+                        },
+                        colors: ['#FF69B4', '#FFD1DC', '#FFF'],
+                        disableForReducedMotion: true
+                    });
+                } catch (e) { }
+            }
+        }
+
+        function shakeCard(card) {
+            card.classList.add('shake');
+            setTimeout(() => card.classList.remove('shake'), 400);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            if (t) {
+                t.innerText = msg;
+                t.className = "show";
+                setTimeout(() => { t.className = t.className.replace("show", ""); }, 2500);
+            }
+        }
+
+        function showCompletion() {
+            const screen = document.getElementById('completion-screen');
+            if (screen) {
+                screen.style.display = 'block';
+                screen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Heart Confetti
+            if (typeof confetti !== 'undefined') {
+                const duration = 3000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 6,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#FFC0CB', '#FF69B4', '#FF1493'],
+                        shapes: ['heart']
+                    });
+                    confetti({
+                        particleCount: 6,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#FFC0CB', '#FF69B4', '#FF1493'],
+                        shapes: ['heart']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        }
+
+        function nextLevel() {
+            if (typeof gsap !== 'undefined') {
+                gsap.to('.timeline-container', {
+                    opacity: 0,
+                    y: -50,
+                    duration: 0.8,
+                    onComplete: () => window.location.href = 'level4.html'
+                });
+            } else {
+                window.location.href = 'level4.html';
+            }
+        }
+
+        // --- Background Effects ---
+        function createHearts() {
+            const bg = document.getElementById('hearts-bg');
+            if (!bg) return;
+
+            const icons = ['💗', '💖', '🤍', '🌸'];
+            for (let i = 0; i < 25; i++) {
+                const h = document.createElement('div');
+                h.className = 'heart-particle';
+                h.innerText = icons[Math.floor(Math.random() * icons.length)];
+                h.style.left = Math.random() * 100 + '%';
+                h.style.fontSize = Math.random() * 20 + 10 + 'px';
+                h.style.animationDuration = Math.random() * 5 + 8 + 's';
+                h.style.animationDelay = Math.random() * 5 + 's';
+                bg.appendChild(h);
+            }
+        }
+
+        // --- Music Toggle ---
+        let isPlaying = false;
+        const music = document.getElementById('bg-music');
+        function toggleMusic() {
+            if (!music) return;
+
+            if (isPlaying) {
+                music.pause();
+                document.querySelector('.music-pill i').className = 'fas fa-music';
+            } else {
+                music.play().catch(() => alert("Tap anywhere first!"));
+                document.querySelector('.music-pill i').className = 'fas fa-pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- Init ---
+        renderTimeline();
+        createHearts();
+        if (sessionStorage.getItem('gameActive') === 'true') {
+            // music.play().catch(()=>{});
+        }
+
+    </script>
+</body>
+
+</html>
